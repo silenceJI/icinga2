@@ -28,6 +28,7 @@
 #include "base/utility.hpp"
 #include "base/scriptglobal.hpp"
 #include "base/json.hpp"
+#include "base/gc.hpp"
 #include <boost/algorithm/string/join.hpp>
 #include <boost/thread/once.hpp>
 #include <thread>
@@ -540,7 +541,7 @@ void Process::ThreadInitialize(void)
 {
 	/* Note to self: Make sure this runs _after_ we've daemonized. */
 	for (int tid = 0; tid < IOTHREADS; tid++) {
-		std::thread t(std::bind(&Process::IOThreadProc, tid));
+		std::thread t(GC::WrapThread(std::bind(&Process::IOThreadProc, tid)));
 		t.detach();
 	}
 }

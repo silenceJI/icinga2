@@ -23,6 +23,7 @@
 #include "base/utility.hpp"
 #include "base/exception.hpp"
 #include "base/application.hpp"
+#include "base/gc.hpp"
 #include <iostream>
 
 using namespace icinga;
@@ -53,7 +54,7 @@ void ThreadPool::Start(void)
 	for (size_t i = 0; i < sizeof(m_Queues) / sizeof(m_Queues[0]); i++)
 		m_Queues[i].SpawnWorker(m_ThreadGroup);
 
-	m_MgmtThread = std::thread(std::bind(&ThreadPool::ManagerThreadProc, this));
+	m_MgmtThread = std::thread(GC::WrapThread(std::bind(&ThreadPool::ManagerThreadProc, this)));
 }
 
 void ThreadPool::Stop(void)
@@ -336,7 +337,7 @@ void ThreadPool::Queue::SpawnWorker(boost::thread_group& group)
 			Log(LogDebug, "ThreadPool", "Spawning worker thread.");
 
 			Threads[i] = WorkerThread(ThreadIdle);
-			Threads[i].Thread = group.create_thread(std::bind(&ThreadPool::WorkerThread::ThreadProc, std::ref(Threads[i]), std::ref(*this)));
+			Threads[i].Thread = group.create_thread(GC::WrapThread(std::bind(&ThreadPool::WorkerThread::ThreadProc, std::ref(Threads[i]), std::ref(*this))));
 
 			break;
 		}
