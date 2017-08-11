@@ -17,53 +17,48 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 
-#ifndef APIUSER_H
-#define APIUSER_H
+#include "remote/apiuser.hpp"
+#include <BoostTestTargetConfig.h>
 
-#include "remote/i2-remote.hpp"
-#include "remote/apiuser.thpp"
-#include "base/dictionary.hpp"
+using namespace icinga;
 
-namespace icinga
-{
-
-/**
- * @ingroup remote
- */
-class I2_REMOTE_API ApiUser : public ObjectImpl<ApiUser>
-{
-public:
-	DECLARE_OBJECT(ApiUser);
-	DECLARE_OBJECTNAME(ApiUser);
-
-	virtual void OnConfigLoaded(void) override;
-
-	static ApiUser::Ptr GetByClientCN(const String& cn);
-	static String CreateHashedPasswordString(const String& password, const String& salt, const bool shadow = false);
-
-	Dictionary::Ptr GetPasswordDict(void);
-	bool ComparePassword(String password) const;
-
+/*
 #ifdef I2_DEBUG
-//	friend class ApiUserTest;
-	String GetSalt() {
-		return m_Salt;
+class ApiUserTest {
+public:
+	static String getSalt(ApiUser::Ptr a) {
+		return a->m_Salt;
 	}
-	String GetPasswd() {
-		return m_Hashed_passwd;
+	static void setSalt(ApiUser::Ptr a, const String salt) {
+		a->m_Salt = salt;
 	}
-	void SetSalt(String s) {
-		m_Salt = s;
+	static String getPassword(ApiUser::Ptr a) {
+		return a->m_Hashed_passwd;
 	}
-	void SetPasswd(String s) {
-		m_Hashed_passwd = s;
+	static void setPassword(ApiUser::Ptr a, const String password) {
+		a->m_Hashed_passwd = password;
 	}
-#endif
-private:
-	String m_Salt;
-	String m_Hashed_passwd;
 };
+#endif
+*/
 
+BOOST_AUTO_TEST_SUITE(api_user)
+
+BOOST_AUTO_TEST_CASE(password)
+{
+#ifndef I2_DEBUG
+	std::cout << "Only enabled in Debug builds..." << std::endl;
+#else
+	ApiUser::Ptr user = new ApiUser();
+	user->SetSalt("CCCP");
+	user->SetPasswd(ApiUser::CreateHashedPasswordString("icinga2icinga", user->GetSalt()));
+
+	BOOST_CHECK(user->ComparePassword("icinga2icinga"));
+	BOOST_CHECK(!user->ComparePassword("2icinga"));
+
+	user->SetSalt("BBBP");
+	BOOST_CHECK(!user->ComparePassword("icinga2icinga"));
+#endif
 }
 
-#endif /* APIUSER_H */
+BOOST_AUTO_TEST_SUITE_END()

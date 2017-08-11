@@ -153,9 +153,11 @@ bool ApiSetupUtility::SetupMasterCertificates(const String& cn)
 
 bool ApiSetupUtility::SetupMasterApiUser(void)
 {
-	String api_username = "root"; // TODO make this available as cli parameter?
-	String api_password = RandomString(8);
-	String apiUsersPath = GetConfdPath() + "/api-users.conf";
+	String api_username    = "root"; // TODO make this available as cli parameter?
+	String api_password    = RandomString(8);
+	String api_salt        = RandomString(8);
+	String api_hashed_pswd = ApiUser::CreateHashedPasswordString(api_password, api_salt, true);
+	String apiUsersPath    = GetConfdPath() + "/api-users.conf";
 
 	if (Utility::PathExists(apiUsersPath)) {
 		Log(LogInformation, "cli")
@@ -175,7 +177,8 @@ bool ApiSetupUtility::SetupMasterApiUser(void)
 	    << " * The APIUser objects are used for authentication against the API.\n"
 	    << " */\n"
 	    << "object ApiUser \"" << api_username << "\" {\n"
-	    << "  password = \"" << api_password << "\"\n"
+	    << "  // password: \"" << api_password << "\"\n"
+	    << "  password_hash =\"" << api_hashed_pswd << "\"\n"
 	    << "  // client_cn = \"\"\n"
 	    << "\n"
 	    << "  permissions = [ \"*\" ]\n"

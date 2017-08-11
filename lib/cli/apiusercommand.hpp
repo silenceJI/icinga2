@@ -17,53 +17,31 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.             *
  ******************************************************************************/
 
-#ifndef APIUSER_H
-#define APIUSER_H
+#ifndef APIUSERCOMMAND_H
+#define APIUSERCOMMAND_H
 
-#include "remote/i2-remote.hpp"
-#include "remote/apiuser.thpp"
-#include "base/dictionary.hpp"
+#include "cli/clicommand.hpp"
 
 namespace icinga
 {
 
 /**
- * @ingroup remote
+ * The "api user" command.
+ *
+ * @ingroup cli
  */
-class I2_REMOTE_API ApiUser : public ObjectImpl<ApiUser>
+class ApiUserCommand : public CLICommand
 {
 public:
-	DECLARE_OBJECT(ApiUser);
-	DECLARE_OBJECTNAME(ApiUser);
+	DECLARE_PTR_TYPEDEFS(ApiUserCommand);
 
-	virtual void OnConfigLoaded(void) override;
-
-	static ApiUser::Ptr GetByClientCN(const String& cn);
-	static String CreateHashedPasswordString(const String& password, const String& salt, const bool shadow = false);
-
-	Dictionary::Ptr GetPasswordDict(void);
-	bool ComparePassword(String password) const;
-
-#ifdef I2_DEBUG
-//	friend class ApiUserTest;
-	String GetSalt() {
-		return m_Salt;
-	}
-	String GetPasswd() {
-		return m_Hashed_passwd;
-	}
-	void SetSalt(String s) {
-		m_Salt = s;
-	}
-	void SetPasswd(String s) {
-		m_Hashed_passwd = s;
-	}
-#endif
-private:
-	String m_Salt;
-	String m_Hashed_passwd;
+	virtual String GetDescription(void) const override;
+	virtual String GetShortDescription(void) const override;
+	virtual void InitParameters(boost::program_options::options_description& visibleDesc,
+	    boost::program_options::options_description& hiddenDesc) const override;
+	virtual int Run(const boost::program_options::variables_map& vm, const std::vector<std::string>& ap) const override;
 };
 
 }
 
-#endif /* APIUSER_H */
+#endif /* APIUSERCOMMAND_H */
