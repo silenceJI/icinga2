@@ -117,7 +117,7 @@ add_boost_test(base
         remote_url/get_and_set
         remote_url/format
         remote_url/illegal_legal_strings
-        remote_user/password
+        api_user/password
 )
 
 if(ICINGA2_WITH_LIVESTATUS)
