@@ -29,7 +29,7 @@ void Checkable::UpdateFlappingStatus(bool stateChange)
 	std::bitset<20> stateChangeBuf = GetFlappingBuffer();
 	int oldestIndex = GetFlappingIndex();
 
-	stateChangeBuf[oldestIndex] = stateChange;
+	stateChangeBuf.set(oldestIndex, stateChange);
 	oldestIndex = (oldestIndex + 1) % 20;
 
 	double stateChanges = 0;
