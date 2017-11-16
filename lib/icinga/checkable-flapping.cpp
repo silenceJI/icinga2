@@ -38,7 +38,7 @@ void Checkable::UpdateFlappingStatus(bool stateChange)
 	for (int i = 0; i < 20; i++) {
 		int index = (oldestIndex + i) % 20;
 
-		if (stateChangeBuf[index])
+		if (stateChangeBuf.test(index))
 			stateChanges += 0.8 + (0.02 * i);
 	}
 
