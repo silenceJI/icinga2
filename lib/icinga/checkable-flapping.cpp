@@ -26,10 +26,10 @@ using namespace icinga;
 
 void Checkable::UpdateFlappingStatus(bool stateChange)
 {
-	int flappingBuffer = GetFlappingBuffer();
+	int flappingBuffer = Convert::ToLong(GetFlappingBuffer());
 
 	std::bitset<20> stateChangeBuf(flappingBuffer);
-	int oldestIndex = GetFlappingIndex();
+	int oldestIndex = Convert::ToLong(GetFlappingIndex());
 
 	stateChangeBuf.set(oldestIndex, stateChange);
 	oldestIndex = (oldestIndex + 1) % 20;
