@@ -36,7 +36,9 @@ void Checkable::UpdateFlappingStatus(bool stateChange)
 
 	/* Iterate over our state array and compute a weighted total */
 	for (int i = 0; i < 20; i++) {
-		if (stateChangeBuf[(oldestIndex + i) % 20])
+		int index = (oldestIndex + i) % 20;
+
+		if (stateChangeBuf[index])
 			stateChanges += 0.8 + (0.02 * i);
 	}
 
