@@ -1,5 +1,6 @@
 .vagrant
 .idea
+.vs
 *.patch
 *.komodoproject
 *.playground
@@ -12,3 +13,4 @@ build32/
 build64/
 debug/
 release/
+CMakeSettings.json
